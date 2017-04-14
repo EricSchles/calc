@@ -6,6 +6,8 @@ from django.forms import MultiWidget, NumberInput
 from django.forms.fields import MultiValueField, IntegerField
 from django.template.loader import render_to_string
 
+from . import USE_NEW_FORM_API
+
 
 FieldNames = namedtuple('FieldNames', ['year', 'month', 'day'])
 
@@ -46,7 +48,11 @@ class SplitDateWidget(MultiWidget):
         if not isinstance(value, list):
             value = self.decompress(value)
 
-        final_attrs = self.build_attrs(attrs)
+        if USE_NEW_FORM_API:
+            final_attrs = self.build_attrs(self.attrs, attrs)
+        else:
+            final_attrs = self.build_attrs(attrs)
+
         id_ = final_attrs.get('id')
         widget_infos = []
         for i, widget in enumerate(self.widgets):
